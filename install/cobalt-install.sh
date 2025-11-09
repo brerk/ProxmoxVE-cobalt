@@ -32,12 +32,13 @@ msg_info "Setting up Cobalt Tools"
 mkdir -p /opt/cobalt
 git clone https://github.com/imputnet/cobalt /opt/cobalt
 
-cd /opt/cobalt
-$STD pnpm install
 
-cat <<EOF >/opt/cobalt/.env
+cat <<EOF >/opt/cobalt/api/.env
 API_URL=http://localhost:9000/
 EOF
+
+cd /opt/cobalt/api
+$STD pnpm install
 
 msg_ok "Installed cobalt on /opt/cobalt"
 
@@ -51,7 +52,7 @@ After=network.target
 [Service]
 ExecStart=/usr/local/bin/pnpm start
 Restart=always
-WorkingDirectory=/opt/cobalt
+WorkingDirectory=/opt/cobalt/api
 
 [Install]
 WantedBy=multi-user.target
