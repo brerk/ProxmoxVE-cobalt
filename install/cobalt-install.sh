@@ -21,6 +21,7 @@ msg_info "Installing Dependencies"
 $STD apt-get install -y \
   nodejs \
   npm \
+  nginx \
   git 
 
 $STD npm install -g pnpm@latest-10
@@ -28,19 +29,45 @@ $STD npm install -g pnpm@latest-10
 msg_ok "Installed Dependencies"
 
 msg_info "Setting up Cobalt Tools"
-
 mkdir -p /opt/cobalt
 git clone https://github.com/imputnet/cobalt /opt/cobalt
-
 
 cat <<EOF >/opt/cobalt/api/.env
 API_URL=http://localhost:9000/
 EOF
 
+cat <<EOF >/opt/cobalt/api/.env
+WEB_DEFAULT_API=http://localhost:9000/
+EOF
+
 cd /opt/cobalt/api
 $STD pnpm install
 
-msg_ok "Installed cobalt on /opt/cobalt"
+cd /opt/cobalt/web
+$STD pnpm run build
+
+msg_ok "Installed Cobalt Tools on /opt/cobalt"
+
+msg_info "Configuring Nginx for Cobalt"
+
+cat <<'EOF' >/etc/nginx/sites-available/cobalt
+server {
+    listen 8080;
+    server_name _;
+
+    root /opt/cobalt/web/build;
+    index index.html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+}
+EOF
+
+ln -sf /etc/nginx/sites-available/cobalt /etc/nginx/sites-enabled/cobalt
+rm -f /etc/nginx/sites-enabled/default
+systemctl restart nginx
+msg_ok "Nginx configured for Cobalt"
 
 # Creating Service (if needed)
 msg_info "Creating Service"
