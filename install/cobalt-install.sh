@@ -19,12 +19,8 @@ APPLICATION="cobalt-tools"
 # Installing Dependencies
 msg_info "Installing Dependencies"
 $STD apt-get install -y \
-  # nodejs \
-  # npm \
   nginx \
   git 
-
-# $STD npm install -g pnpm@latest-10
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 \. "$HOME/.nvm/nvm.sh"
