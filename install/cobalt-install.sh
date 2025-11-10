@@ -20,6 +20,7 @@ APPLICATION="cobalt-tools"
 msg_info "Installing Dependencies"
 $STD apt-get install -y \
   nginx \
+  curl \
   git 
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
