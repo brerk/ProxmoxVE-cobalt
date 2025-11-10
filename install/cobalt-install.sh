@@ -19,12 +19,17 @@ APPLICATION="cobalt-tools"
 # Installing Dependencies
 msg_info "Installing Dependencies"
 $STD apt-get install -y \
-  nodejs \
-  npm \
+  # nodejs \
+  # npm \
   nginx \
   git 
 
-$STD npm install -g pnpm@latest-10
+# $STD npm install -g pnpm@latest-10
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+\. "$HOME/.nvm/nvm.sh"
+nvm install 24
+corepack enable pnpm
 
 msg_ok "Installed Dependencies"
 
@@ -36,7 +41,7 @@ cat <<EOF >/opt/cobalt/api/.env
 API_URL=http://localhost:9000/
 EOF
 
-cat <<EOF >/opt/cobalt/api/.env
+cat <<EOF >/opt/cobalt/web/.env
 WEB_DEFAULT_API=http://localhost:9000/
 EOF
 
@@ -45,11 +50,9 @@ $STD pnpm install
 
 cd /opt/cobalt/web
 $STD pnpm run build
-
 msg_ok "Installed Cobalt Tools on /opt/cobalt"
 
 msg_info "Configuring Nginx for Cobalt"
-
 cat <<'EOF' >/etc/nginx/sites-available/cobalt
 server {
     listen 8080;
